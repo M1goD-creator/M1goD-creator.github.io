@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Mig: websites and Telegram bots</title>
+<style>
+html{scroll-padding-top:72px}
+body{margin:0;background:#ffffff;-webkit-tap-highlight-color:transparent}
+a,button,summary,label{touch-action:manipulation}
+h1,h2,h3{text-wrap:balance}
+p,dd{text-wrap:pretty}
+.num{font-variant-numeric:tabular-nums}
+.skip{position:absolute;left:16px;top:-100px;z-index:20;background:#64242F;color:#ffffff !important;padding:12px 16px;border-radius:12px;font-weight:600;text-decoration:none}
+.skip:focus{top:12px}
+a{color:#B44446}a:hover{color:#64242F}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid #B44446;outline-offset:3px;border-radius:6px}
+.nav a{color:#64242F;text-decoration:none;white-space:nowrap}
+.nav .links a{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:980px;font-weight:500;transition:background-color 150ms ease-out,color 150ms ease-out}
+.nav .links a:hover{background:#F2D4D4;color:#64242F}
+.nav .links a:active{background:#FC8F8F}
+.nav .cta,.nav .cta:hover{color:#ffffff;text-decoration:none}
+@media (max-width: 760px){html{scroll-padding-top:112px}.nav nav{flex-wrap:wrap !important;height:auto !important;padding-top:8px !important;padding-bottom:8px !important;row-gap:8px !important}.nav .links{order:3;width:100%;overflow-x:auto;gap:4px !important;padding-bottom:4px;margin-left:-14px}}
+.btn{transition:transform 260ms cubic-bezier(.34,1.56,.64,1),background-color 180ms ease-out,color 180ms ease-out}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:scale(0.97);transition-duration:100ms}
+.progress{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#B44446;transform-origin:0 50%;transform:scaleX(0)}
+@keyframes grow{to{transform:scaleX(1)}}
+@keyframes lift{from{box-shadow:0 0 0 rgba(43,20,24,0)}to{box-shadow:0 6px 20px rgba(43,20,24,0.08)}}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:none}}
+.ind{transition:background-color 180ms ease-out,border-color 180ms ease-out,transform 260ms cubic-bezier(.34,1.56,.64,1)}
+.tile:active .ind{transform:scale(0.85)}
+.tick{transition:opacity 150ms ease-out,transform 260ms cubic-bezier(.34,1.56,.64,1)}
+.btn-primary:hover{background:#64242F !important}
+.btn-outline:hover{background:#64242F !important;color:#ffffff !important}
+.btn-soft:hover{background:#ffffff !important}
+.tile{transition:border-color 150ms ease,background-color 150ms ease}
+.tile:hover{border-color:#B44446 !important}
+.tile input{position:absolute;opacity:0;width:1px;height:1px}
+.tile:has(input:focus-visible){outline:2px solid #B44446;outline-offset:2px}
+.row-link{transition:background-color 150ms ease}
+.row-link:hover{background:#7A3340 !important}
+.faq input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.faq label{user-select:none;-webkit-user-select:none;transition:color 150ms ease-out}
+.faq label:hover{color:#B44446 !important}
+.faq label{margin:0 -12px;padding-left:12px !important;padding-right:12px !important;border-radius:12px}
+.faq input:focus-visible ~ label{outline:2px solid #B44446;outline-offset:-2px}
+.faq .plus{transform-origin:12px 12px;will-change:transform;transform:rotate(0deg) translateZ(0);transition:transform 350ms cubic-bezier(.2,.8,.2,1)}
+.faq input:checked ~ label .plus{transform:rotate(45deg) translateZ(0)}
+.faq .ans{display:grid;grid-template-rows:0fr;transition:grid-template-rows 350ms cubic-bezier(.2,.8,.2,1)}
+.faq .ans > div{overflow:hidden;min-height:0;opacity:0;visibility:hidden;transition:opacity 250ms ease-out,visibility 0s linear 350ms}
+.faq input:checked ~ .ans{grid-template-rows:1fr}
+.faq input:checked ~ .ans > div{opacity:1;visibility:visible;transition:opacity 300ms ease-out 50ms,visibility 0s}
+@media (prefers-reduced-motion: no-preference){
+html{scroll-behavior:smooth}
+.hero-logo{animation:pop 600ms cubic-bezier(.34,1.56,.64,1) both}
+.hero-in{animation:rise 600ms cubic-bezier(.2,.8,.2,1) both}
+.d1{animation-delay:120ms}.d2{animation-delay:220ms}.d3{animation-delay:320ms}
+@supports (animation-timeline: scroll()){
+.progress{animation:grow linear both;animation-timeline:scroll(root)}
+.nav{animation:lift linear both;animation-timeline:scroll(root);animation-range:0 120px}
+}
+}
+@media (prefers-reduced-motion: reduce){.btn,.btn:hover,.btn:active{transform:none}.faq .plus,.faq .ans,.faq .ans > div,.ind,.tick{transition:none !important}}
+@media (prefers-reduced-transparency: reduce){.nav{background:#ffffff !important;backdrop-filter:none !important}}
+</style>
+</head>
+<body>
+<div style="width: 100%; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #2b1418; background: #ffffff; font-size: 17px; line-height: 1.5; overflow-x: clip;">
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- Navigation -->
+<header class="nav" style="position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,0.9); backdrop-filter: blur(16px); border-bottom: 1px solid #DFD9D8;">
+<nav aria-label="Main" style="max-width: 1120px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; flex-wrap: nowrap; align-items: center; justify-content: space-between; gap: 24px;">
+<a href="#top" style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 17px; letter-spacing: -0.01em; flex-shrink: 0;">
+<svg aria-hidden="true" width="32" height="32" viewBox="0 0 120 120"><rect width="120" height="120" rx="27" fill="#F2D4D4"></rect><path d="M26 88V40c0-7 8-10 13-5l21 21 21-21c5-5 13-2 13 5v48a6 6 0 0 1-6 6H76a6 6 0 0 1-6-6V66l-6 6a6 6 0 0 1-8 0l-6-6v22a6 6 0 0 1-6 6H32a6 6 0 0 1-6-6z" fill="#64242F"></path></svg>
+<span translate="no">Mig</span>
+</a>
+<div class="links" style="display: flex; flex-wrap: nowrap; gap: 4px; font-size: 15px;">
+<a href="#services">Services</a>
+<a href="#extras">Add-ons</a>
+<a href="#process">How it works</a>
+<a href="#faq">FAQ</a>
+<a href="#contact">Contact</a>
+</div>
+<a class="btn btn-primary cta" href="#constructor" style="background: #B44446; font-size: 15px; font-weight: 500; padding: 8px 16px; border-radius: 980px; min-height: 40px; box-sizing: border-box; display: inline-flex; align-items: center; flex-shrink: 0;">Get a quote</a>
+</nav>
+<div class="progress" aria-hidden="true"></div>
+</header>
+
+<main id="main">
+<!-- Hero: logo + slogan -->
+<section id="top" style="padding: 120px 24px 112px;">
+<div style="max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 32px;">
+<svg class="hero-logo" role="img" aria-label="Mig logo" width="104" height="104" viewBox="0 0 120 120"><rect width="120" height="120" rx="27" fill="#F2D4D4"></rect><path d="M26 88V40c0-7 8-10 13-5l21 21 21-21c5-5 13-2 13 5v48a6 6 0 0 1-6 6H76a6 6 0 0 1-6-6V66l-6 6a6 6 0 0 1-8 0l-6-6v22a6 6 0 0 1-6 6H32a6 6 0 0 1-6-6z" fill="#64242F"></path></svg>
+<h1 class="hero-in d1" style="margin: 0; font-size: clamp(40px, 6vw, 80px); line-height: 1.05; letter-spacing: -0.025em; font-weight: 700; max-width: 900px; color: #64242F;">Want your business online? Order a website or bot in a couple of clicks.</h1>
+<p class="hero-in d2" style="margin: 0; font-size: 21px; line-height: 1.4; color: #6b4f53; max-width: 640px;">I build websites and Telegram bots for small businesses across Europe, and you talk to me directly from the first message to launch.</p>
+<div class="hero-in d3" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 16px;">
+<a class="btn btn-primary" href="#services" style="background: #B44446; color: #ffffff; font-size: 17px; font-weight: 500; padding: 12px 24px; border-radius: 980px; text-decoration: none; min-height: 48px; box-sizing: border-box; display: inline-flex; align-items: center;">See services and prices</a>
+<a class="btn btn-outline" href="#contact" style="color: #64242F; background: #ffffff; font-size: 17px; font-weight: 500; padding: 12px 24px; border-radius: 980px; text-decoration: none; min-height: 48px; box-sizing: border-box; display: inline-flex; align-items: center; border: 1px solid #64242F;">Message me</a>
+</div>
+</div>
+</section>
+
+<!-- Services with prices -->
+<section id="services" style="background: #F4EFEE; padding: 104px 24px;">
+<div style="max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; gap: 48px;">
+<div style="display: flex; flex-direction: column; gap: 16px; text-align: center; align-items: center;">
+<h2 style="margin: 0; font-size: 48px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 700; color: #64242F;">Services</h2>
+<p style="margin: 0; font-size: 19px; color: #6b4f53; max-width: 600px;">Each service comes in three packages. Prices are in EUR, and I confirm the exact quote after a short chat. I’m not registered for VAT, so no VAT is added.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+
+<article class="card" style="background: #ffffff; border: 1px solid #DFD9D8; border-radius: 24px; padding: 32px; display: flex; flex-direction: column; gap: 16px;">
+<h3 style="margin: 0; font-size: 24px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 600; color: #64242F;">One-page website</h3>
+<p style="margin: 0; color: #6b4f53; font-size: 16px;">A landing page for a café, salon, studio or local shop, with a contact form and a mobile version.</p>
+<span style="font-size: 32px; font-weight: 700; letter-spacing: -0.02em; color: #64242F;">from €190</span>
+<dl style="margin: 0; display: flex; flex-direction: column; border-top: 1px solid #DFD9D8;">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 16px 0; border-bottom: 1px solid #DFD9D8;"><div style="display: flex; justify-content: space-between; gap: 16px;"><dt style="font-weight: 600;">Basic</dt><dd class="num" style="margin: 0; font-weight: 600;">€190</dd></div><dd style="margin: 0; color: #6b4f53; font-size: 14px;">Template design, up to 5 sections, 1 revision, about 7 days</dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 16px 0; border-bottom: 1px solid #DFD9D8;"><div style="display: flex; justify-content: space-between; gap: 16px;"><dt style="font-weight: 600;">Standard <span style="font-weight: 400; color: #6b4f53; font-size: 14px;">(recommended)</span></dt><dd class="num" style="margin: 0; font-weight: 600;">€350</dd></div><dd style="margin: 0; color: #6b4f53; font-size: 14px;">Custom design, up to 8 sections, basic SEO and analytics, 2 revisions, about 10 days</dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 16px 0;"><div style="display: flex; justify-content: space-between; gap: 16px;"><dt style="font-weight: 600;">Premium</dt><dd class="num" style="margin: 0; font-weight: 600;">€590</dd></div><dd style="margin: 0; color: #6b4f53; font-size: 14px;">Custom design with animations, up to 12 sections, help with texts, 3 revisions, 1 month of free support, about 14 days</dd></div>
+</dl>
+<a href="#constructor" style="margin-top: auto; font-size: 15px; font-weight: 500;">Calculate my price</a>
+</article>
+
+<article class="card" style="background: #ffffff; border: 1px solid #DFD9D8; border-radius: 24px; padding: 32px; display: flex; flex-direction: column; gap: 16px;">
+<h3 style="margin: 0; font-size: 24px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 600; color: #64242F;">Multi-page website</h3>
+<p style="margin: 0; color: #6b4f53; font-size: 16px;">A full site for a business that needs separate pages for services, prices, a blog or bookings.</p>
+<span style="font-size: 32px; font-weight: 700; letter-spacing: -0.02em; color: #64242F;">from €490</span>
+<dl style="margin: 0; display: flex; flex-direction: column; border-top: 1px solid #DFD9D8;">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 16px 0; border-bottom: 1px solid #DFD9D8;"><div style="display: flex; justify-content: space-between; gap: 16px;"><dt style="font-weight: 600;">Basic</dt><dd class="num" style="margin: 0; font-weight: 600;">€490</dd></div><dd style="margin: 0; color: #6b4f53; font-size: 14px;">Template design, up to 5 pages, 1 revision, about 2 weeks</dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 16px 0; border-bottom: 1px solid #DFD9D8;"><div style="display: flex; justify-content: space-between; gap: 16px;"><dt style="font-weight: 600;">Standard <span style="font-weight: 400; color: #6b4f53; font-size: 14px;">(recommended)</span></dt><dd class="num" style="margin: 0; font-weight: 600;">€950</dd></div><dd style="margin: 0; color: #6b4f53; font-size: 14px;">Custom design, up to 10 pages, blog, basic SEO and analytics, 2 revisions, about 3 weeks</dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 16px 0;"><div style="display: flex; justify-content: space-between; gap: 16px;"><dt style="font-weight: 600;">Premium</dt><dd class="num" style="margin: 0; font-weight: 600;">from €1,700</dd></div><dd style="margin: 0; color: #6b4f53; font-size: 14px;">10+ pages, a CMS so you can edit content yourself, booking or payment integrations, 2 months of free support, about 4 to 5 weeks</dd></div>
+</dl>
+<a href="#constructor" style="margin-top: auto; font-size: 15px; font-weight: 500;">Calculate my price</a>
+</article>
+
+<article class="card" style="background: #ffffff; border: 1px solid #DFD9D8; border-radius: 24px; padding: 32px; display: flex; flex-direction: column; gap: 16px;">
+<h3 style="margin: 0; font-size: 24px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 600; color: #64242F;">Telegram bot</h3>
+<p style="margin: 0; color: #6b4f53; font-size: 16px;">A bot that answers customer questions and takes bookings or orders. Every new request comes straight to you in Telegram.</p>
+<span style="font-size: 32px; font-weight: 700; letter-spacing: -0.02em; color: #64242F;">from €120</span>
+<dl style="margin: 0; display: flex; flex-direction: column; border-top: 1px solid #DFD9D8;">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 16px 0; border-bottom: 1px solid #DFD9D8;"><div style="display: flex; justify-content: space-between; gap: 16px;"><dt style="font-weight: 600;">Basic</dt><dd class="num" style="margin: 0; font-weight: 600;">€120</dd></div><dd style="margin: 0; color: #6b4f53; font-size: 14px;">Menu, FAQ and contact info, lead form sent to you, about 5 days</dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 16px 0; border-bottom: 1px solid #DFD9D8;"><div style="display: flex; justify-content: space-between; gap: 16px;"><dt style="font-weight: 600;">Standard <span style="font-weight: 400; color: #6b4f53; font-size: 14px;">(recommended)</span></dt><dd class="num" style="margin: 0; font-weight: 600;">€300</dd></div><dd style="margin: 0; color: #6b4f53; font-size: 14px;">Bookings or orders, database, admin commands, broadcast messages, about 10 days</dd></div>
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 16px 0;"><div style="display: flex; justify-content: space-between; gap: 16px;"><dt style="font-weight: 600;">Premium</dt><dd class="num" style="margin: 0; font-weight: 600;">from €650</dd></div><dd style="margin: 0; color: #6b4f53; font-size: 14px;">Payments or a Telegram Mini App, admin panel, CRM or API integration, about 3 to 4 weeks</dd></div>
+</dl>
+<a href="#constructor" style="margin-top: auto; font-size: 15px; font-weight: 500;">Calculate my price</a>
+</article>
+
+</div>
+<p style="margin: 0; text-align: center; color: #64242F; font-size: 16px;">Every project starts after a 40% prepayment. You pay the other 60% when the work is finished.</p>
+</div>
+</section>
+
+<!-- Setup and add-ons -->
+<section id="extras" style="max-width: 1120px; margin: 0 auto; padding: 104px 24px; display: flex; flex-direction: column; gap: 48px;">
+<div style="display: flex; flex-direction: column; gap: 16px;">
+<h2 style="margin: 0; font-size: 48px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 700; color: #64242F;">Setup and add-ons</h2>
+<p style="margin: 0; font-size: 19px; color: #6b4f53; max-width: 640px;">Add these to any package. You pay domain, hosting and server fees directly to the provider at their price, and the setup price covers my work. There are no other fees.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+<div style="background: #F4EFEE; border-radius: 24px; padding: 32px; display: flex; flex-direction: column; gap: 8px;">
+<h3 style="margin: 0 0 8px; font-size: 21px; font-weight: 600; color: #64242F;">One-time setup</h3>
+<dl style="margin: 0; display: flex; flex-direction: column; font-size: 16px;">
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>Domain and hosting setup, launch</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">€30</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>Business email on your domain</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">€20</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>Google Analytics and Search Console</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">€25</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>Google Business Profile</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">€25</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>GDPR cookie banner and privacy policy page</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">€35</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>Telegram bot deployment on a server</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">€25</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0;"><dt>Website form leads sent to your Telegram</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">€30</dd></div>
+</dl>
+</div>
+<div style="background: #F4EFEE; border-radius: 24px; padding: 32px; display: flex; flex-direction: column; gap: 8px;">
+<h3 style="margin: 0 0 8px; font-size: 21px; font-weight: 600; color: #64242F;">Add-ons</h3>
+<dl style="margin: 0; display: flex; flex-direction: column; font-size: 16px;">
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>Extra section (one-page site)</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">€25</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>Extra page (multi-page site)</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">€50</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>Second language version</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">+30% of package</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>Copywriting</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">€25 per page</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>Simple logo</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">€90</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>Extra revision round</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">€30</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>Express delivery, in half the time</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">+25%</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>Website support and updates</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">€35 / month</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #DFD9D8;"><dt>Bot hosting and maintenance</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap;">€20 / month</dd></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 12px 0;"><dt>Website and bot together</dt><dd class="num" style="margin: 0; font-weight: 600; white-space: nowrap; color: #9E3638;">10% off</dd></div>
+</dl>
+</div>
+</div>
+</section>
+
+<!-- How it works -->
+<section id="process" style="background: #F4EFEE; padding: 104px 24px;">
+<div style="max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; gap: 48px;">
+<h2 style="margin: 0; font-size: 48px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 700; color: #64242F;">How ordering works</h2>
+<ol style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px; counter-reset: none;">
+<li style="display: flex; flex-direction: column; gap: 8px; border-top: 2px solid #64242F; padding-top: 16px;"><span style="font-size: 15px; font-weight: 600; color: #9E3638;">Step 1</span><span style="font-size: 21px; font-weight: 600; letter-spacing: -0.01em; color: #64242F;">You message me</span><span style="color: #6b4f53; font-size: 16px;">Tell me about your business and what you need.</span></li>
+<li style="display: flex; flex-direction: column; gap: 8px; border-top: 2px solid #64242F; padding-top: 16px;"><span style="font-size: 15px; font-weight: 600; color: #9E3638;">Step 2</span><span style="font-size: 21px; font-weight: 600; letter-spacing: -0.01em; color: #64242F;">Quote and deadline</span><span style="color: #6b4f53; font-size: 16px;">You get a fixed price in EUR and a delivery date.</span></li>
+<li style="display: flex; flex-direction: column; gap: 8px; border-top: 2px solid #64242F; padding-top: 16px;"><span style="font-size: 15px; font-weight: 600; color: #9E3638;">Step 3</span><span style="font-size: 21px; font-weight: 600; letter-spacing: -0.01em; color: #64242F;">40% prepayment</span><span style="color: #6b4f53; font-size: 16px;">You pay 40% of the total, and then I start work.</span></li>
+<li style="display: flex; flex-direction: column; gap: 8px; border-top: 2px solid #64242F; padding-top: 16px;"><span style="font-size: 15px; font-weight: 600; color: #9E3638;">Step 4</span><span style="font-size: 21px; font-weight: 600; letter-spacing: -0.01em; color: #64242F;">Review and launch</span><span style="color: #6b4f53; font-size: 16px;">I finish the work and make your edits. You pay the remaining 60%, and I publish it.</span></li>
+</ol>
+</div>
+</section>
+
+<!-- Order builder -->
+<section id="constructor" style="padding: 104px 24px;">
+<div style="max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; gap: 48px;">
+<div style="display: flex; flex-direction: column; gap: 16px; text-align: center; align-items: center;">
+<h2 style="margin: 0; font-size: 48px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 700; color: #64242F;">Build your order</h2>
+<p style="margin: 0; font-size: 19px; color: #6b4f53; max-width: 560px;">Pick a service, a package and any extras to get an estimate.</p>
+</div>
+<form style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start;">
+
+<div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 24px;">
+
+<fieldset style="border: 1px solid #DFD9D8; margin: 0; background: #ffffff; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 16px; min-width: 0;">
+<legend style="float: left; width: 100%; padding: 0; display: flex; align-items: center; gap: 12px; font-size: 19px; font-weight: 600; color: #64242F;"><span style="width: 28px; height: 28px; border-radius: 50%; background: #64242F; color: #ffffff; font-size: 14px; display: flex; align-items: center; justify-content: center;">1</span>Choose a service</legend>
+<div id="list-kinds" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px;">
+
+</div>
+</fieldset>
+
+<fieldset style="border: 1px solid #DFD9D8; margin: 0; background: #ffffff; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 16px; min-width: 0;">
+<legend style="float: left; width: 100%; padding: 0; display: flex; align-items: center; gap: 12px; font-size: 19px; font-weight: 600; color: #64242F;"><span style="width: 28px; height: 28px; border-radius: 50%; background: #64242F; color: #ffffff; font-size: 14px; display: flex; align-items: center; justify-content: center;">2</span>Choose a package</legend>
+<div id="list-tiers" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px;">
+
+</div>
+</fieldset>
+
+<fieldset style="border: 1px solid #DFD9D8; margin: 0; background: #ffffff; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 16px; min-width: 0;">
+<legend style="float: left; width: 100%; padding: 0; display: flex; align-items: center; gap: 12px; font-size: 19px; font-weight: 600; color: #64242F;"><span style="width: 28px; height: 28px; border-radius: 50%; background: #64242F; color: #ffffff; font-size: 14px; display: flex; align-items: center; justify-content: center;">3</span>Add extras <span style="font-size: 15px; font-weight: 400; color: #6b4f53;">(optional)</span></legend>
+<div id="list-extras" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
+
+</div>
+</fieldset>
+
+</div>
+
+<aside class="num" aria-label="Your estimate" style="flex: 1 1 280px; background: #64242F; color: #ffffff; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 16px; position: sticky; top: 80px;">
+<span style="font-size: 19px; font-weight: 600;">Your estimate</span>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<div style="display: flex; justify-content: space-between; gap: 16px; font-size: 15px;"><span style="color: #F2D4D4;"><span data-h="summaryName"></span></span><span><span data-h="basePrice"></span></span></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; font-size: 15px;"><span style="color: #F2D4D4;">Extras</span><span><span data-h="extrasPrice"></span></span></div>
+</div>
+<div style="border-top: 1px solid #8A4A55; padding-top: 16px; display: flex; justify-content: space-between; align-items: baseline; gap: 16px;"><span style="color: #F2D4D4;">Total</span><span aria-live="polite" style="font-size: 40px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1;"><span data-h="total"></span></span></div>
+<div style="background: #74303B; border-radius: 16px; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; font-size: 15px;">
+<div style="display: flex; justify-content: space-between; gap: 16px;"><span style="color: #F2D4D4;">Now (40%)</span><span style="font-weight: 600;"><span data-h="prepay"></span></span></div>
+<div style="display: flex; justify-content: space-between; gap: 16px;"><span style="color: #F2D4D4;">When finished (60%)</span><span style="font-weight: 600;"><span data-h="rest"></span></span></div>
+</div>
+<a class="btn btn-soft" href="https://t.me/M1goD_George" style="background: #FC8F8F; color: #64242F; text-decoration: none; text-align: center; border-radius: 980px; font-weight: 600; padding: 12px 24px; min-height: 48px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">Send request in Telegram</a>
+<span style="color: #F2D4D4; font-size: 13px; line-height: 1.5;">This is an estimate. I confirm the final price after we talk. This page doesn’t save or send your choices. By messaging me you agree to the <a href="terms.html" style="color: #ffffff;">Terms</a> and <a href="privacy.html" style="color: #ffffff;">Privacy policy</a>.</span>
+</aside>
+
+</form>
+</div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background: #F4EFEE; padding: 104px 24px;">
+<div style="max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px;">
+<h2 style="margin: 0; font-size: 48px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 700; color: #64242F;">Questions</h2>
+<div style="display: flex; flex-direction: column; background: #ffffff; border: 1px solid #DFD9D8; border-radius: 24px; padding: 0 24px;">
+<div class="faq" style="position: relative; border-bottom: 1px solid #DFD9D8;"><input type="checkbox" id="faq1" aria-controls="faq1a"><label for="faq1" style="font-weight: 600; cursor: pointer; font-size: 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px; color: #64242F; min-height: 32px; padding: 16px 0;">How long does it take?<svg class="plus" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" style="flex-shrink: 0; display: block;"><path d="M12 5v14M5 12h14" stroke="#9E3638" stroke-width="2" stroke-linecap="round"></path></svg></label><div class="ans" id="faq1a"><div><p style="margin: 0; padding-bottom: 16px; color: #6b4f53;">A one-page site takes about 7 to 14 days, a multi-page site 2 to 5 weeks, and a bot 5 days to 4 weeks, depending on the package. Express delivery halves the time for 25% extra.</p></div></div></div>
+<div class="faq" style="position: relative; border-bottom: 1px solid #DFD9D8;"><input type="checkbox" id="faq2" aria-controls="faq2a"><label for="faq2" style="font-weight: 600; cursor: pointer; font-size: 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px; color: #64242F; min-height: 32px; padding: 16px 0;">How do I pay?<svg class="plus" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" style="flex-shrink: 0; display: block;"><path d="M12 5v14M5 12h14" stroke="#9E3638" stroke-width="2" stroke-linecap="round"></path></svg></label><div class="ans" id="faq2a"><div><p style="margin: 0; padding-bottom: 16px; color: #6b4f53;">All prices are in EUR. You pay 40% of the total before I start work and the remaining 60% after the work is finished. I accept Visa and Mastercard.</p></div></div></div>
+<div class="faq" style="position: relative; border-bottom: 1px solid #DFD9D8;"><input type="checkbox" id="faq3" aria-controls="faq3a"><label for="faq3" style="font-weight: 600; cursor: pointer; font-size: 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px; color: #64242F; min-height: 32px; padding: 16px 0;">Can I cancel and get a refund?<svg class="plus" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" style="flex-shrink: 0; display: block;"><path d="M12 5v14M5 12h14" stroke="#9E3638" stroke-width="2" stroke-linecap="round"></path></svg></label><div class="ans" id="faq3a"><div><p style="margin: 0; padding-bottom: 16px; color: #6b4f53;">If you cancel before I start, you get the full prepayment back. The details are in the <a href="refunds.html">refund policy</a>.</p></div></div></div>
+<div class="faq" style="position: relative; border-bottom: 1px solid #DFD9D8;"><input type="checkbox" id="faq4" aria-controls="faq4a"><label for="faq4" style="font-weight: 600; cursor: pointer; font-size: 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px; color: #64242F; min-height: 32px; padding: 16px 0;">Who pays for the domain and hosting?<svg class="plus" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" style="flex-shrink: 0; display: block;"><path d="M12 5v14M5 12h14" stroke="#9E3638" stroke-width="2" stroke-linecap="round"></path></svg></label><div class="ans" id="faq4a"><div><p style="margin: 0; padding-bottom: 16px; color: #6b4f53;">You do, directly to the provider, and they stay in your name. My setup fee covers the work of connecting everything.</p></div></div></div>
+<div class="faq" style="position: relative; border-bottom: 1px solid #DFD9D8;"><input type="checkbox" id="faq5" aria-controls="faq5a"><label for="faq5" style="font-weight: 600; cursor: pointer; font-size: 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px; color: #64242F; min-height: 32px; padding: 16px 0;">What do I need to provide?<svg class="plus" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" style="flex-shrink: 0; display: block;"><path d="M12 5v14M5 12h14" stroke="#9E3638" stroke-width="2" stroke-linecap="round"></path></svg></label><div class="ans" id="faq5a"><div><p style="margin: 0; padding-bottom: 16px; color: #6b4f53;">Just your requirements. A logo, texts or photos help, but I can work without them. If you need a logo or texts, I can also make them as add-ons.</p></div></div></div>
+<div class="faq" style="position: relative;"><input type="checkbox" id="faq6" aria-controls="faq6a"><label for="faq6" style="font-weight: 600; cursor: pointer; font-size: 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px; color: #64242F; min-height: 32px; padding: 16px 0;">What if I need changes later?<svg class="plus" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" style="flex-shrink: 0; display: block;"><path d="M12 5v14M5 12h14" stroke="#9E3638" stroke-width="2" stroke-linecap="round"></path></svg></label><div class="ans" id="faq6a"><div><p style="margin: 0; padding-bottom: 16px; color: #6b4f53;">Each package includes revision rounds, and extra rounds are €30. After launch, website support is €35 a month and bot hosting and maintenance is €20 a month.</p></div></div></div>
+</div>
+</div>
+</section>
+
+<!-- Contacts -->
+<section id="contact" style="background: #64242F; color: #ffffff; padding: 104px 24px;">
+<div style="max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px;">
+<div style="display: flex; flex-direction: column; gap: 16px;">
+<h2 style="margin: 0; font-size: 48px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 700;">Contact me</h2>
+<p style="margin: 0; font-size: 19px; color: #F2D4D4;">Telegram is the fastest way to reach me. I reply within 2 hours, every day from 10:00 to 23:00 (CET).</p>
+</div>
+<div style="display: flex; flex-direction: column; border-top: 1px solid #8A4A55;">
+<a class="row-link" href="https://t.me/M1goD_George" style="text-decoration: none; color: #ffffff; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 24px 8px; border-bottom: 1px solid #8A4A55; flex-wrap: wrap;"><span style="font-size: 21px; font-weight: 600;">Telegram</span><span style="color: #F2D4D4; font-size: 17px;">@M1goD_George</span></a>
+<a class="row-link" href="https://www.instagram.com/_m1god/" style="text-decoration: none; color: #ffffff; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 24px 8px; border-bottom: 1px solid #8A4A55; flex-wrap: wrap;"><span style="font-size: 21px; font-weight: 600;">Instagram</span><span style="color: #F2D4D4; font-size: 17px;">@_m1god</span></a>
+<a class="row-link" href="mailto:migdev.business@gmail.com" style="text-decoration: none; color: #ffffff; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 24px 8px; border-bottom: 1px solid #8A4A55; flex-wrap: wrap;"><span style="font-size: 21px; font-weight: 600;">Email</span><span style="color: #F2D4D4; font-size: 17px;">migdev.business@gmail.com</span></a>
+</div>
+</div>
+</section>
+
+</main>
+
+<!-- Footer -->
+<footer style="background: #4E1B24; color: #F2D4D4; padding: 40px 24px;">
+<div style="max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; font-size: 14px;">
+<nav aria-label="Legal" style="display: flex; flex-wrap: wrap; gap: 8px 24px;">
+<a href="privacy.html" style="color: #ffffff;">Privacy policy</a>
+<a href="terms.html" style="color: #ffffff;">Terms of service</a>
+<a href="refunds.html" style="color: #ffffff;">Refund policy</a>
+<a href="cookies.html" style="color: #ffffff;">Cookie policy</a>
+<a href="mailto:migdev.business@gmail.com?subject=Delete%20my%20data" style="color: #ffffff;">Delete my data</a>
+</nav>
+<p style="margin: 0;">Mig is run by Georgii Rezhepp, based in Belgrade, Serbia. Email: migdev.business@gmail.com.</p>
+<p style="margin: 0;">This site uses no cookies or tracking. Services are for businesses and adults aged 18 or over. © 2026 Mig.</p>
+</div>
+</footer>
+
+</div>
+<script>
+(function(){
+var state={kind:'one',tier:'standard',extras:{}};
+const PRICES = {
+one: { basic: 190, standard: 350, premium: 590 },
+multi: { basic: 490, standard: 950, premium: 1700 },
+bot: { basic: 120, standard: 300, premium: 650 }
+};
+const KINDS = [
+{ id: 'one', label: 'One-page site' },
+{ id: 'multi', label: 'Multi-page site' },
+{ id: 'bot', label: 'Telegram bot' }
+];
+const NOTES = {
+one: { basic: 'Template, 5 sections', standard: 'Custom, 8 sections', premium: 'Custom, 12 sections' },
+multi: { basic: 'Template, 5 pages', standard: 'Custom, 10 pages', premium: '10+ pages, CMS' },
+bot: { basic: 'Menu, FAQ, leads', standard: 'Bookings or orders', premium: 'Payments, Mini App' }
+};
+const TIERS = [
+{ id: 'basic', label: 'Basic' },
+{ id: 'standard', label: 'Standard' },
+{ id: 'premium', label: 'Premium' }
+];
+const EXTRAS = [
+{ id: 'domain', label: 'Domain and hosting setup', price: 30, web: true },
+{ id: 'gdpr', label: 'GDPR cookie banner', price: 35, web: true },
+{ id: 'leads', label: 'Leads sent to your Telegram', price: 30, web: true },
+{ id: 'deploy', label: 'Server deployment', price: 25, bot: true },
+{ id: 'logo', label: 'Simple logo', price: 90, web: true, bot: true },
+{ id: 'lang', label: 'Second language', pct: 0.3, web: true, bot: true },
+{ id: 'express', label: 'Express delivery', pct: 0.25, web: true, bot: true }
+];
+
+function eur(n){return '\u20ac'+Math.round(n).toLocaleString('en-US');}
+function sel(on){return {border:on?'#B44446':'#DFD9D8',bg:on?'#FDF1F1':'#ffffff',ring:on?'#B44446':'#94797C',fill:on?'#B44446':'#ffffff',tick:on?1:0,tickScale:on?1:0.4};}
+function ext(a,b){for(var k in b)a[k]=b[k];return a;}
+var T={kinds:function(k){return `<label class="tile" style="position: relative; display: flex; flex-direction: column; gap: 4px; border: 2px solid ${k.border}; background: ${k.bg}; border-radius: 16px; padding: 16px 44px 16px 16px; cursor: pointer;"><input type="radio" name="kind" ${k.on?"checked":""} data-act="kind" value="${k.id}"><span class="ind" aria-hidden="true" style="position: absolute; top: 16px; right: 16px; width: 20px; height: 20px; box-sizing: border-box; border-radius: 50%; border: 2px solid ${k.ring}; background: ${k.fill}; box-shadow: inset 0 0 0 3px #ffffff;"></span><span style="font-weight: 600;">${k.label}</span><span style="color: #6b4f53; font-size: 14px;">${k.from}</span></label>`;},tiers:function(t){return `<label class="tile" style="position: relative; display: flex; flex-direction: column; gap: 4px; border: 2px solid ${t.border}; background: ${t.bg}; border-radius: 16px; padding: 16px 44px 16px 16px; cursor: pointer;"><input type="radio" name="tier" ${t.on?"checked":""} data-act="tier" value="${t.id}"><span class="ind" aria-hidden="true" style="position: absolute; top: 16px; right: 16px; width: 20px; height: 20px; box-sizing: border-box; border-radius: 50%; border: 2px solid ${t.ring}; background: ${t.fill}; box-shadow: inset 0 0 0 3px #ffffff;"></span><span style="font-weight: 600;">${t.label}</span><span style="font-size: 20px; font-weight: 700; color: #64242F;">${t.price}</span><span style="color: #6b4f53; font-size: 14px;">${t.note}</span></label>`;},extras:function(x){return `<label class="tile" style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; border: 2px solid ${x.border}; background: ${x.bg}; border-radius: 16px; padding: 12px 16px; min-height: 48px; box-sizing: border-box; cursor: pointer;"><input type="checkbox" ${x.on?"checked":""} data-act="extra" value="${x.id}"><span style="display: flex; align-items: center; gap: 12px; font-size: 15px;"><span class="ind" aria-hidden="true" style="width: 20px; height: 20px; box-sizing: border-box; flex-shrink: 0; border-radius: 6px; border: 2px solid ${x.ring}; background: ${x.fill}; display: flex; align-items: center; justify-content: center;"><svg class="tick" width="12" height="12" viewBox="0 0 12 12" style="opacity: ${x.tick}; transform: scale(${x.tickScale});"><path d="M2 6.5l2.5 2.5L10 3.5" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>${x.label}</span><span style="font-size: 15px; font-weight: 600; color: #64242F; white-space: nowrap;">${x.price}</span></label>`;}};
+function render(){
+var s=state,isBot=s.kind==='bot',base=PRICES[s.kind][s.tier];
+var visible=EXTRAS.filter(function(x){return isBot?x.bot:x.web;});
+var extra=0;visible.forEach(function(x){if(s.extras[x.id])extra+=x.pct?base*x.pct:x.price;});
+var total=base+extra;
+var from=function(k,t){return k!=='one'&&t==='premium'?'from ':'';};
+var kinds=KINDS.map(function(k){return ext(ext({},k),ext({from:'from '+eur(PRICES[k.id].basic),on:s.kind===k.id},sel(s.kind===k.id)));});
+var tiers=TIERS.map(function(t){return ext(ext({},t),ext({price:from(s.kind,t.id)+eur(PRICES[s.kind][t.id]),note:NOTES[s.kind][t.id],on:s.tier===t.id},sel(s.tier===t.id)));});
+var extras=visible.map(function(x){var on=!!s.extras[x.id];return ext({id:x.id,label:x.label,price:x.pct?'+'+Math.round(x.pct*100)+'%':'+'+eur(x.price),on:on},sel(on));});
+var a=document.activeElement,fa=a&&a.dataset?a.dataset.act:null,fv=a?a.value:null;
+document.getElementById('list-kinds').innerHTML=kinds.map(T.kinds).join('');
+document.getElementById('list-tiers').innerHTML=tiers.map(T.tiers).join('');
+document.getElementById('list-extras').innerHTML=extras.map(T.extras).join('');
+var vals={summaryName:KINDS.filter(function(k){return k.id===s.kind;})[0].label+', '+TIERS.filter(function(t){return t.id===s.tier;})[0].label,basePrice:eur(base),extrasPrice:eur(extra),total:eur(total),prepay:eur(total*0.4),rest:eur(total-Math.round(total*0.4))};
+document.querySelectorAll('[data-h]').forEach(function(el){el.textContent=vals[el.dataset.h];});
+if(fa){var el=document.querySelector('[data-act="'+fa+'"][value="'+fv+'"]');if(el)el.focus();}
+}
+document.addEventListener('change',function(e){var t=e.target,act=t.dataset&&t.dataset.act;if(!act)return;
+if(act==='kind')state.kind=t.value;else if(act==='tier')state.tier=t.value;else{state.extras[t.value]=t.checked;}
+render();});
+render();
+})();
+</script>
+</body>
+</html>
